@@ -6,8 +6,9 @@ public class Flight {
     private String flightId;
     private String from;
     private String to;
+    private Seat[][] seats;
 
-    public Flight(int id, String flightId, String from, String to){
+    public Flight(int id, String flightId, String from, String to) {
         this.id = id;
         this.flightId = flightId;
         this.from = from;
@@ -44,5 +45,14 @@ public class Flight {
 
     public void setTo(String to) {
         this.to = to;
+    }
+
+
+    public Seat[][] getSeats() {
+        return seats;
+    }
+
+    public void setSeats(Seat[][] seats) {
+        this.seats = seats;
     }
 }
