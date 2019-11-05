@@ -10,6 +10,9 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+/**
+ * To run this client write in terminal "mvn exec:java@passenger"
+ */
 public class PassengerCli {
     private static int rows = 6; //rows in a flight
     private static int cols = 30; //cols in a flight
@@ -60,6 +63,10 @@ public class PassengerCli {
         }
     }
 
+    /**
+     * Lets the user choose a passenger or create a new one calling the method createPassenger
+     * @throws Exception when there is an SQL error or when the input is not the expected one
+     */
     private static void choosePassenger() throws Exception {
         System.out.println("Choose one of the following listed passengers or create a new one: ");
         ResultSet rs;
@@ -82,7 +89,7 @@ public class PassengerCli {
         int num = in.nextInt();
         in.nextLine(); //workaround to not jump next reading
         if (num > pos || num < 0) {
-            System.err.println("Error the option chosen is not in the list given.");
+            System.err.println("Error the option chosen is not in the given list.");
             throw new Exception();
         } else if (num == pos) {
             try {
@@ -100,6 +107,11 @@ public class PassengerCli {
 
     }
 
+    /**
+     * Lets the user create a passenger after receiving input
+     * @return the created passenger
+     * @throws Exception when there is an SQL error
+     */
     private static Passenger createPassenger() throws Exception {
         Passenger created;
         int id;
@@ -129,6 +141,11 @@ public class PassengerCli {
         return created;
     }
 
+    /**
+     * Lets the user choose an available flight
+     * @return the chosen flight
+     * @throws Exception when there is an SQL error or when the input is not the expected one
+     */
     private static Flight chooseFlight() throws Exception {
         System.out.println("Choose one of the following listed flights:");
         ResultSet rs;
@@ -152,13 +169,19 @@ public class PassengerCli {
         int num = in.nextInt();
         in.nextLine(); //workaround to not jump next reading
         if (num >= pos || num < 0) {
-            System.err.println("Error the option chosen is not in the list given.");
+            System.err.println("Error the option chosen is not in the given list.");
         } else {
             option = flights.get(num);
         }
         return option;
     }
 
+    /**
+     * Lets the user choose a seat from the chosen flight
+     * @param flight the flight chosen in chooseFlight
+     * @return the chosen seats in an ArrayList
+     * @throws Exception when there is an SQL error or when the input is not the expected one
+     */
     private static ArrayList<Seat> chooseFlightSeat(Flight flight) throws Exception {
         ResultSet rs;
         ArrayList<Seat> chosen = new ArrayList<>();
@@ -208,6 +231,12 @@ public class PassengerCli {
         return chosen;
     }
 
+    /**
+     * Checks again the availability of the chosen seats (locking them in the db) and prompts a confirmation step
+     * that needs user input
+     * @param chosen the chosen seats from chooseFlightSeats
+     * @throws Exception when there is an SQL error or when the input is not the expected one
+     */
     private static void bookSeats(ArrayList<Seat> chosen) throws Exception {
         String ids = "";
         String positions = "";
@@ -245,7 +274,10 @@ public class PassengerCli {
         }
     }
 
-
+    /**
+     * method created to print the flight seats retrieved from the db
+     * @param seats the seats of the flight to be printed
+     */
     private static void printSeats(Seat[][] seats) {
         for (int i = 0; i < rows; i++) {
             System.out.print((char) (i + diff) + "  ");

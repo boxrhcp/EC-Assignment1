@@ -3,7 +3,9 @@ package com.eclab.database;
 import java.sql.*;
 
 public class Database {
-
+    /**
+     * Parameters needed to connect to DB
+     */
     private String database = "jdbc:mysql://ec-1.cx3ybesgvhcj.eu-central-1.rds.amazonaws.com:3306/assignment1";
     private String username = "admin";
     private String password = "Enterpriselab1";
