@@ -3,14 +3,15 @@ package com.eclab.database;
 import java.sql.*;
 
 public class Database {
-    public Database() {
-
-    }
 
     private String database = "jdbc:mysql://ec-1.cx3ybesgvhcj.eu-central-1.rds.amazonaws.com:3306/assignment1";
     private String username = "admin";
     private String password = "Enterpriselab1";
     private Connection con;
+
+    public Database() {
+
+    }
 
     public void connect() throws SQLException {
         con = DriverManager.getConnection(database, username, password);

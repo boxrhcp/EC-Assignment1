@@ -5,7 +5,6 @@ import com.eclab.database.models.Flight;
 import com.eclab.database.models.Passenger;
 import com.eclab.database.models.Seat;
 
-import javax.xml.transform.Result;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -27,10 +26,10 @@ public class PassengerCli {
             try {
                 choosePassenger();
                 if (enable) {
-                    Flight flight = chooseFlight(); //checkear si devuelve el id bien
+                    Flight flight = chooseFlight();
                     ArrayList<Seat> chosen = chooseFlightSeat(flight);
                     bookSeats(chosen);
-                    System.out.println("End of Passenger execution, do you want to exit or to make another action? (y/n)");
+                    System.out.println("End of Airline execution, do you want to make another action (y) or to exit (n)? (y/n)");
                     char answer = in.nextLine().toLowerCase().charAt(0);
                     if (answer == 'n') enable = false;
                 }
@@ -43,7 +42,7 @@ public class PassengerCli {
         System.exit(0);
     }
 
-    public static void startConnection() {
+    private static void startConnection() {
         try {
             db.connect();
         } catch (SQLException e) {
@@ -52,7 +51,7 @@ public class PassengerCli {
         }
     }
 
-    public static void stopConnection() {
+    private static void stopConnection() {
         try {
             db.disconnect();
         } catch (SQLException e) {
@@ -61,9 +60,9 @@ public class PassengerCli {
         }
     }
 
-    public static void choosePassenger() throws Exception {
+    private static void choosePassenger() throws Exception {
         System.out.println("Choose one of the following listed passengers or create a new one: ");
-        ResultSet rs = null;
+        ResultSet rs;
         ArrayList<Passenger> passengers = new ArrayList<>();
         int pos = 0;
         try {
@@ -84,10 +83,11 @@ public class PassengerCli {
         in.nextLine(); //workaround to not jump next reading
         if (num > pos || num < 0) {
             System.err.println("Error the option chosen is not in the list given.");
+            throw new Exception();
         } else if (num == pos) {
             try {
                 user = createPassenger();
-                System.out.println("End of Passenger execution, do you want to exit or to make another action? (y/n)");
+                System.out.println("End of Airline execution, do you want to make another action (y) or to exit (n)? (y/n)");
                 char answer = in.nextLine().toLowerCase().charAt(0);
                 if (answer == 'n') enable = false;
             } catch (Exception e) {
@@ -101,9 +101,9 @@ public class PassengerCli {
     }
 
     private static Passenger createPassenger() throws Exception {
-        Passenger created = null;
+        Passenger created;
         int id;
-        ResultSet rs = null;
+        ResultSet rs;
         System.out.println("Creating a new passenger. Introduce the name: ");
         String name = in.nextLine();
         System.out.println("Introduce the surname: ");
@@ -129,9 +129,9 @@ public class PassengerCli {
         return created;
     }
 
-    public static Flight chooseFlight() throws Exception {
+    private static Flight chooseFlight() throws Exception {
         System.out.println("Choose one of the following listed flights:");
-        ResultSet rs = null;
+        ResultSet rs;
         Flight option = null;
         ArrayList<Flight> flights = new ArrayList<>();
         int pos = 0;
@@ -159,8 +159,8 @@ public class PassengerCli {
         return option;
     }
 
-    public static ArrayList<Seat> chooseFlightSeat(Flight flight) throws Exception {
-        ResultSet rs = null;
+    private static ArrayList<Seat> chooseFlightSeat(Flight flight) throws Exception {
+        ResultSet rs;
         ArrayList<Seat> chosen = new ArrayList<>();
         Seat[][] seats = new Seat[rows][cols];
         for (int i = 0; i < seats.length; i++)
@@ -193,7 +193,7 @@ public class PassengerCli {
                 String[] j = i.split(":");
                 int col = Integer.parseInt(j[0]) - 1;
                 int row = j[1].toUpperCase().charAt(0) - diff;
-                if ((col < 0 || col > (cols-1)) || (row < 0 || row > (rows-1))) {
+                if ((col < 0 || col > (cols - 1)) || (row < 0 || row > (rows - 1))) {
                     System.err.println("The seat chosen is out of bounds");
                     throw new Exception();
                 } else {
@@ -208,13 +208,13 @@ public class PassengerCli {
         return chosen;
     }
 
-    public static void bookSeats(ArrayList<Seat> chosen) throws Exception {
+    private static void bookSeats(ArrayList<Seat> chosen) throws Exception {
         String ids = "";
         String positions = "";
-        ResultSet rs = null;
-        for (Seat s : chosen){
+        ResultSet rs;
+        for (Seat s : chosen) {
             ids += s.getId() + ",";
-            positions += (s.getCol()+1) + "" + s.getRow() + " ";
+            positions += (s.getCol() + 1) + "" + s.getRow() + " ";
         }
         ids = ids.substring(0, ids.length() - 1);
         try {
@@ -227,13 +227,14 @@ public class PassengerCli {
             }
             System.out.print("You are going to book the seats: " + positions + ". Confirm the booking (y/n).");
             char answer = in.nextLine().toLowerCase().charAt(0);
-            if (answer == 'y'){
+            if (answer == 'y') {
                 db.execUpdate("UPDATE seats SET userId = " + user.getId() + " WHERE id in (" + ids + ")");
                 db.commit();
-            }else if(answer == 'n'){
+                System.out.println("Seats booking confirmed.");
+            } else if (answer == 'n') {
                 System.out.println("Cancelling seats booking.");
                 db.rollback();
-            }else{
+            } else {
                 throw new Exception("Error in confirmation, write only y or n.");
             }
         } catch (Exception e) {
@@ -245,22 +246,7 @@ public class PassengerCli {
     }
 
 
-    public static void printUser(Seat seat) throws Exception {
-        ResultSet rs = null;
-        int pos = 0;
-        try {
-            rs = db.execStatement("SELECT * FROM passengers WHERE id = " + seat.getUserId());
-            if (rs.next()) {
-                System.out.println("The seat " + seat.getCol() + seat.getRow() + " is booked by the passenger " +
-                        rs.getString(2) + " " + rs.getString(3));
-            }
-        } catch (SQLException e) {
-            System.err.println("Error reading the available flights");
-            throw e;
-        }
-    }
-
-    public static void printSeats(Seat[][] seats) {
+    private static void printSeats(Seat[][] seats) {
         for (int i = 0; i < rows; i++) {
             System.out.print((char) (i + diff) + "  ");
             for (int j = 0; j < cols; j++) {

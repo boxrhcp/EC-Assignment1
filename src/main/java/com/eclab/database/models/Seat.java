@@ -7,16 +7,8 @@ public class Seat {
     private int userId;
     private int idFlight;
 
-    public Seat(){
+    public Seat() {
 
-    }
-
-    public Seat(int id, char row, int col, int userId, int idFlight) {
-        this.id = id;
-        this.row = row;
-        this.col = col;
-        this.userId = userId;
-        this.idFlight = idFlight;
     }
 
     public int getId() {
