@@ -7,9 +7,9 @@ public class Database {
 
     }
 
-    private String database = "";
-    private String username = "";
-    private String password = "";
+    private String database = "jdbc:mysql://ec-1.cx3ybesgvhcj.eu-central-1.rds.amazonaws.com:3306/assignment1";
+    private String username = "admin";
+    private String password = "Enterpriselab1";
     private Connection con;
 
     public void connect() throws SQLException {
