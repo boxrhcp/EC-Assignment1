@@ -32,7 +32,7 @@ public class PassengerCli {
                     Flight flight = chooseFlight();
                     ArrayList<Seat> chosen = chooseFlightSeat(flight);
                     bookSeats(chosen);
-                    System.out.println("End of Airline execution, do you want to make another action (y) or to exit (n)? (y/n)");
+                    System.out.println("End of Passenger execution, do you want to make another action (y) or to exit (n)? (y/n)");
                     char answer = in.nextLine().toLowerCase().charAt(0);
                     if (answer == 'n') enable = false;
                 }
@@ -94,7 +94,7 @@ public class PassengerCli {
         } else if (num == pos) {
             try {
                 user = createPassenger();
-                System.out.println("End of Airline execution, do you want to make another action (y) or to exit (n)? (y/n)");
+                System.out.println("End of Passenger execution, do you want to make another action (y) or to exit (n)? (y/n)");
                 char answer = in.nextLine().toLowerCase().charAt(0);
                 if (answer == 'n') enable = false;
             } catch (Exception e) {
