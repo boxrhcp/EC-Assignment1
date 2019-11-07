@@ -30,9 +30,18 @@ public class Database {
                 .executeQuery(query);
     }
 
+    public PreparedStatement prepareStatement(String query) throws SQLException {
+        PreparedStatement stmnt = con.prepareStatement(query);
+        return stmnt;
+    }
+
     public void execUpdate(String query) throws SQLException {
         Statement selectStmt = con.createStatement();
         selectStmt.executeUpdate(query);
+    }
+
+    public void execUpdate(PreparedStatement query) throws SQLException {
+        query.executeUpdate();
     }
 
     public void commit() throws SQLException {

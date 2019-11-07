@@ -5,6 +5,7 @@ import com.eclab.database.models.Flight;
 import com.eclab.database.models.Passenger;
 import com.eclab.database.models.Seat;
 
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -94,7 +95,7 @@ public class PassengerCli {
         } else if (num == pos) {
             try {
                 user = createPassenger();
-                System.out.println("End of Passenger execution, do you want to make another action (y) or to exit (n)? (y/n)");
+                System.out.println("End of Passenger creation, do you want to book flight seats (y) or to exit (n)? (y/n)");
                 char answer = in.nextLine().toLowerCase().charAt(0);
                 if (answer == 'n') enable = false;
             } catch (Exception e) {
@@ -118,12 +119,15 @@ public class PassengerCli {
         ResultSet rs;
         System.out.println("Creating a new passenger. Introduce the name: ");
         String name = in.nextLine();
+
         System.out.println("Introduce the surname: ");
         String surname = in.nextLine();
 
         try {
-            db.execUpdate("INSERT INTO passengers VALUES (NULL,'" + name + "','" +
-                    surname + "')");
+            PreparedStatement stmnt = db.prepareStatement("INSERT INTO passengers VALUES (NULL,?,?)");
+            stmnt.setString(1,name);
+            stmnt.setString(2,surname);
+            db.execUpdate(stmnt);
             rs = db.execStatement("SELECT LAST_INSERT_ID()");
             if (rs.next()) {
                 id = rs.getInt(1);

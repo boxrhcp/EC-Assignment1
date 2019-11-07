@@ -4,6 +4,7 @@ import com.eclab.database.Database;
 import com.eclab.database.models.Flight;
 import com.eclab.database.models.Seat;
 
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -98,7 +99,8 @@ public class AirlineCli {
         } else if (num == pos) {
             try {
                 option = createFlight();
-                System.out.println("End of Airline execution, do you want to make another action (y) or to exit (n)? (y/n)");
+                System.out.println("The flight has been created, do you want to check the flight created (y) " +
+                        "or to exit (n)? (y/n)");
                 char answer = in.nextLine().toLowerCase().charAt(0);
                 if (answer == 'n') enable = false;
             } catch (Exception e) {
@@ -128,9 +130,11 @@ public class AirlineCli {
         System.out.println(("Introduce the destination location: "));
         String to = in.nextLine();
         try {
-            db.execUpdate("INSERT INTO flights VALUES (NULL,'" + flightId + "','" +
-                    from + "','" + to + "')");
-
+            PreparedStatement stmnt = db.prepareStatement("INSERT INTO flights VALUES (NULL,?,?,?)");
+            stmnt.setString(1,flightId);
+            stmnt.setString(2,from);
+            stmnt.setString(3,to);
+            db.execUpdate(stmnt);
             rs = db.execStatement("SELECT LAST_INSERT_ID()");
             if (rs.next()) {
                 id = rs.getInt(1);
